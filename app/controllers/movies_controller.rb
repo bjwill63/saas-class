@@ -7,7 +7,19 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = ['G','PG','PG-13','R']
+    if (params[:commit] != nil && params[:ratings] != nil) 
+       @movies =  Movie.where("rating IN (?)", params[:ratings].keys)
+       @parms = params[:ratings]	
+    elsif session[:ratings] != nil
+       @movies =  Movie.where("rating IN (?)", session[:ratings].keys)
+       @parms = session[:ratings]	       	
+    else
+       @movies = Movie.all
+       @parms={:ratings=>{"G"=>"G","PG"=>"PG","PG-13"=>"PG-13","R"=>"R"}}
+    end
+    session[:ratings] = @parms	
+
     @sort = params[:sort]
     if @sort == "desc"
        @movies.sort! { |a,b| b.title.downcase <=> a.title.downcase }
