@@ -8,6 +8,32 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    @sort = params[:sort]
+    if @sort == "desc"
+       @movies.sort! { |a,b| b.title.downcase <=> a.title.downcase }
+       @sort = "asc"
+       @title_header='hilite'	
+    elsif @sort == "asc"	 
+       @movies.sort! { |a,b| a.title.downcase <=> b.title.downcase }
+       @sort = "desc"
+       @title_header='hilite'
+    else
+       @sort = "asc"
+    end
+
+    @sort_rel = params[:sort_rel]
+    if @sort_rel == "desc"
+       @movies = @movies.sort_by {|e| e.release_date}.reverse
+       @sort_rel = "asc"	
+       @release_header='hilite'
+    elsif @sort_rel == "asc"	 
+       @movies.sort_by! {|e| e.release_date}
+       @sort_rel = "desc" 	
+       @release_header='hilite'
+    else
+       @sort_rel = "asc"
+    end
+
   end
 
   def new
