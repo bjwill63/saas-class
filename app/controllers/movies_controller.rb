@@ -8,18 +8,31 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = ['G','PG','PG-13','R']
-    if (params[:commit] != nil && params[:ratings] != nil) 
-       @movies =  Movie.where("rating IN (?)", params[:ratings].keys)
-       @parms = params[:ratings]	
-    elsif session[:ratings] != nil
-       @movies =  Movie.where("rating IN (?)", session[:ratings].keys)
-       @parms = session[:ratings]	       	
-    else
-       @movies = Movie.all
-       @parms={:ratings=>{"G"=>"G","PG"=>"PG","PG-13"=>"PG-13","R"=>"R"}}
-    end
-    session[:ratings] = @parms	
 
+if params[:ratings] != nil
+	@vRatings = params[:ratings]
+elsif session[:ratings] != nil
+	@vRatings = {} #session[:ratings]
+else
+        @vRatings = {}	
+end
+
+    if (params[:commit] != nil) 
+       if @vRatings == {}
+          #@movies = Movie.all
+	  #@parms = {:ratings=>{"G"=>"G","PG"=>"PG","PG-13"=>"PG-13","R"=>"R"}}
+          @movies =  Movie.where("rating IN (?)", "")
+       else	
+          @movies =  Movie.where("rating IN (?)", @vRatings.keys)
+       end
+    elsif @vRatings == {}
+          @movies = Movie.all
+          @vRatings = {"G"=>"G","PG"=>"PG","PG-13"=>"PG-13","R"=>"R"}
+    else	
+	  @movies =  Movie.where("rating IN (?)", @vRatings.keys)
+    end	       	
+    session[:ratings] = @vRatings	
+ #session[:ratings] = nil
     @sort = params[:sort]
     if @sort == "desc"
        @movies.sort! { |a,b| b.title.downcase <=> a.title.downcase }
