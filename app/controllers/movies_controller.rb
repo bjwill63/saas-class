@@ -12,7 +12,7 @@ class MoviesController < ApplicationController
 if params[:ratings] != nil
 	@vRatings = params[:ratings]
 elsif session[:ratings] != nil
-	@vRatings = {} #session[:ratings]
+	@vRatings = session[:ratings]
 else
         @vRatings = {}	
 end
@@ -32,7 +32,8 @@ end
 	  @movies =  Movie.where("rating IN (?)", @vRatings.keys)
     end	       	
     session[:ratings] = @vRatings	
- #session[:ratings] = nil
+ 
+#session[:ratings] = nil
     @sort = params[:sort]
     if @sort == "desc"
        @movies.sort! { |a,b| b.title.downcase <=> a.title.downcase }
